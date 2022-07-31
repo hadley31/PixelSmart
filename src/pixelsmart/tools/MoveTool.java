@@ -2,20 +2,27 @@ package pixelsmart.tools;
 
 import java.awt.Rectangle;
 
+import pixelsmart.commands.Command;
+import pixelsmart.commands.SetLayerPositionCommand;
 import pixelsmart.image.Layer;
 import pixelsmart.ui.ImagePanel;
 import pixelsmart.ui.Input;
 
-public class MoveTool extends ToolAdapter {
+public class MoveTool extends AbstractTool {
     private static final int MAX_SNAP_DISTANCE = 5;
 
+    private int oldPositionX, oldPositionY;
     private int mouseOffsetX, mouseOffsetY;
+    private int newPositionX, newPositionY;
 
     @Override
     public void startAction(final ImagePanel panel) {
         final Layer layer = panel.getActiveLayer();
         final int layerX = layer.getX();
         final int layerY = layer.getY();
+
+        oldPositionX = layerX;
+        oldPositionY = layerY;
 
         mouseOffsetX = layerX - panel.getMouseX(ImagePanel.RELATIVE_TO_IMAGE);
         mouseOffsetY = layerY - panel.getMouseY(ImagePanel.RELATIVE_TO_IMAGE);
@@ -32,8 +39,8 @@ public class MoveTool extends ToolAdapter {
         final int lx = panel.getMouseX(ImagePanel.RELATIVE_TO_IMAGE) + mouseOffsetX;
         final int ly = panel.getMouseY(ImagePanel.RELATIVE_TO_IMAGE) + mouseOffsetY;
 
-        int snapX = lx;
-        int snapY = ly;
+        newPositionX = lx;
+        newPositionY = ly;
 
         if (Input.getMouseButtonDown(Input.RIGHT_MOUSE)) {
             final Rectangle rect = layer.getRect();
@@ -53,61 +60,68 @@ public class MoveTool extends ToolAdapter {
                 // Test X, X
                 dist = Math.abs(lx - otherRect.x);
                 if (dist <= MAX_SNAP_DISTANCE && dist < closestX) {
-                    snapX = otherRect.x;
+                    newPositionX = otherRect.x;
                     closestX = dist;
                 }
 
                 // Test X, Width
                 dist = Math.abs(lx - otherMaxX);
                 if (dist <= MAX_SNAP_DISTANCE && dist < closestX) {
-                    snapX = otherMaxX;
+                    newPositionX = otherMaxX;
                     closestX = dist;
                 }
 
                 // Test Max X, X
                 dist = Math.abs(maxX - otherRect.x);
                 if (dist <= MAX_SNAP_DISTANCE && dist < closestX) {
-                    snapX = otherRect.x - rect.width;
+                    newPositionX = otherRect.x - rect.width;
                     closestX = dist;
                 }
 
                 // Test Width, Width
                 dist = Math.abs(maxX - otherMaxX);
                 if (dist <= MAX_SNAP_DISTANCE && dist < closestX) {
-                    snapX = otherMaxX - rect.width;
+                    newPositionX = otherMaxX - rect.width;
                     closestX = dist;
                 }
 
                 // Test Y, Y
                 dist = Math.abs(ly - otherRect.y);
                 if (dist <= MAX_SNAP_DISTANCE && dist < closestY) {
-                    snapY = otherRect.y;
+                    newPositionY = otherRect.y;
                     closestY = dist;
                 }
 
                 // Test Y, Height
                 dist = Math.abs(ly - otherMaxY);
                 if (dist <= MAX_SNAP_DISTANCE && dist < closestY) {
-                    snapY = otherMaxY;
+                    newPositionY = otherMaxY;
                     closestY = dist;
                 }
 
                 // Test Height, Y
                 dist = Math.abs(maxY - otherRect.y);
                 if (dist <= MAX_SNAP_DISTANCE && dist < closestY) {
-                    snapY = otherRect.y - rect.height;
+                    newPositionY = otherRect.y - rect.height;
                     closestY = dist;
                 }
 
                 // Test Height, Height
                 dist = Math.abs(maxY - otherMaxY);
                 if (dist <= MAX_SNAP_DISTANCE && dist < closestY) {
-                    snapY = otherMaxY - rect.width;
+                    newPositionY = otherMaxY - rect.width;
                     closestY = dist;
                 }
             }
         }
 
-        layer.setPosition(snapX, snapY);
+        layer.setPosition(newPositionX, newPositionY);
+    }
+
+    @Override
+    public Command finishAction(ImagePanel panel) {
+        final Layer layer = panel.getActiveLayer();
+
+        return new SetLayerPositionCommand(layer, oldPositionX, oldPositionY, newPositionX, newPositionY);
     }
 }

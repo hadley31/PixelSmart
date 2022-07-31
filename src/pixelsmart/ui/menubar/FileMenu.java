@@ -12,11 +12,11 @@ import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 
-import pixelsmart.commands.CommandList;
+import pixelsmart.commands.CommandExecutor;
 import pixelsmart.image.Image;
 import pixelsmart.ui.ImagePanel;
 import pixelsmart.ui.MainWindow;
-import pixelsmart.util.ImageExporter;
+import pixelsmart.util.ImageFile;
 
 public class FileMenu extends JMenu {
     private static final long serialVersionUID = -9140684398793551793L;
@@ -34,23 +34,23 @@ public class FileMenu extends JMenu {
                         "Do you want to save your current project?", "Save Current Project?",
                         JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
                 switch (result) {
-                default:
-                case JOptionPane.CLOSED_OPTION:
-                case JOptionPane.CANCEL_OPTION:
-                    return;
-                case JOptionPane.NO_OPTION:
-                    break;
-                case JOptionPane.YES_OPTION:
-                    promptSaveProject();
-                    break;
+                    default:
+                    case JOptionPane.CLOSED_OPTION:
+                    case JOptionPane.CANCEL_OPTION:
+                        return;
+                    case JOptionPane.NO_OPTION:
+                        break;
+                    case JOptionPane.YES_OPTION:
+                        promptSaveProject();
+                        break;
                 }
             }
             JTextField widthInput = new JTextField();
             JTextField heightInput = new JTextField();
-            
+
             JLabel widthLabel = new JLabel("Width");
             JLabel heightLabel = new JLabel("Height");
-            
+
             widthInput.setToolTipText("Width");
             widthInput.setText("64");
             heightInput.setText("64");
@@ -64,10 +64,10 @@ public class FileMenu extends JMenu {
                     int width = Integer.parseInt(widthInput.getText());
                     int height = Integer.parseInt(heightInput.getText());
 
-                    CommandList.getInstance().clear();
+                    CommandExecutor.get().clear();
                     ImagePanel.get().setImage(new Image(width, height));
                 } catch (Exception ex) {
-                    CommandList.getInstance().clear();
+                    CommandExecutor.get().clear();
                     ImagePanel.get().setImage(new Image(64, 64));
                 }
             } else {
@@ -86,34 +86,31 @@ public class FileMenu extends JMenu {
                 // File file = fileChooser.getSelectedFile();
                 // TODO SWITCH TO IMAGE
                 // ToolManager.load(file);
-            	if (ImagePanel.get().getImage() != null) {
+                if (ImagePanel.get().getImage() != null) {
                     // Prompt to save current project
                     result = JOptionPane.showOptionDialog(MainWindow.getInstance(),
                             "Do you want to save your current project?", "Save Current Project?",
                             JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
                     switch (result) {
-                    default:
-                    case JOptionPane.CLOSED_OPTION:
-                    case JOptionPane.CANCEL_OPTION:
-                        return;
-                    case JOptionPane.NO_OPTION:
-                        break;
-                    case JOptionPane.YES_OPTION:
-                        promptSaveProject();
-                        break;
+                        default:
+                        case JOptionPane.CLOSED_OPTION:
+                        case JOptionPane.CANCEL_OPTION:
+                            return;
+                        case JOptionPane.NO_OPTION:
+                            break;
+                        case JOptionPane.YES_OPTION:
+                            promptSaveProject();
+                            break;
                     }
                 }
-            	
-            	Image loadedImage = ImageExporter.loadPSF(fileChooser.getSelectedFile());
-            	
-            	if(loadedImage!=null)
-            	{
-            		ImagePanel.get().setImage(loadedImage);
-            	}
-            	else
-            	{
-            		JOptionPane.showMessageDialog(null, "ERROR LOADING .PSF File", "ERROR", JOptionPane.ERROR_MESSAGE);
-            	}
+
+                Image loadedImage = ImageFile.loadPSF(fileChooser.getSelectedFile());
+
+                if (loadedImage != null) {
+                    ImagePanel.get().setImage(loadedImage);
+                } else {
+                    JOptionPane.showMessageDialog(null, "ERROR LOADING .PSF File", "ERROR", JOptionPane.ERROR_MESSAGE);
+                }
             }
         });
 
@@ -133,7 +130,7 @@ public class FileMenu extends JMenu {
             if (image == null) {
                 return;
             }
-            ImageExporter.exportWithDialog(image.getAggregatedData(), "png");
+            ImageFile.exportWithDialog(image.getAggregatedData(), "png");
         });
 
         // Close
@@ -173,7 +170,7 @@ public class FileMenu extends JMenu {
         int result = fileChooser.showSaveDialog(MainWindow.getInstance());
 
         if (result == JFileChooser.APPROVE_OPTION) {
-            ImageExporter.savePSF(image, fileChooser.getSelectedFile());
+            ImageFile.savePSF(image, fileChooser.getSelectedFile());
         }
     }
 }

@@ -21,8 +21,9 @@ import pixelsmart.events.EventHandler;
 import pixelsmart.events.EventListener;
 import pixelsmart.image.Image;
 import pixelsmart.image.Layer;
-import pixelsmart.tools.DrawingTool;
+import pixelsmart.tools.LayerModifierTool;
 import pixelsmart.tools.ToolManager;
+import pixelsmart.util.Clipboard;
 import pixelsmart.util.MathUtil;
 
 public class ImagePanel extends JPanel {
@@ -31,6 +32,8 @@ public class ImagePanel extends JPanel {
     public static final int RELATIVE_TO_PANEL = 0;
     public static final int RELATIVE_TO_IMAGE = 1;
     public static final int RELATIVE_TO_LAYER = 2;
+
+    private final Clipboard clipboard;
 
     private final EventHandler<Layer> onActiveLayerChanged = new EventHandler<Layer>();
     private final EventHandler<Double> onZoomChanged = new EventHandler<Double>();
@@ -62,6 +65,7 @@ public class ImagePanel extends JPanel {
 
         addLayerListener = layer -> setActiveLayer(layer);
         deleteLayerListener = layer -> setActiveLayer(0);
+        clipboard = new Clipboard();
 
         this.addMouseMotionListener(Input.getInstance());
         this.addMouseListener(Input.getInstance());
@@ -87,56 +91,42 @@ public class ImagePanel extends JPanel {
         TexturePaint backPaint = new TexturePaint(transBackground, new Rectangle(rect.x, rect.y, 20, 20));
 
         g.setPaint(backPaint);
-
         g.fill(rect);
-
         g.setPaint(null);
 
-        DrawingTool drawThis = null;
-        if(ToolManager.getInstance().getTool() instanceof DrawingTool)
-        {
-        	drawThis = (DrawingTool)ToolManager.getInstance().getTool();
+        LayerModifierTool modifierTool = null;
+        if (ToolManager.get().getTool() instanceof LayerModifierTool) {
+            modifierTool = (LayerModifierTool) ToolManager.get().getTool();
         }
-        
-        BufferedImage aggregatedImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
+
+        BufferedImage aggregatedImage = new BufferedImage(image.getWidth(), image.getHeight(),
+                BufferedImage.TYPE_INT_ARGB);
         Graphics2D combinedGraphics = aggregatedImage.createGraphics();
-        
+
         // Draw the layers
-        for(Layer l : image)
-    	{
-        	if(l.isVisible())
-        	{
-	        	if(drawThis != null)
-	        	{
-	        		if(drawThis.layerAppliedTo == l)
-	        		{
-	        			//create temp buff image, draw into that
-	        			BufferedImage tempBuffImage = l.copyData();
-	        			drawThis.drawTemporaryImage(tempBuffImage.createGraphics());
-	        			combinedGraphics.drawImage(tempBuffImage, l.getX(), l.getY(), l.getWidth(), l.getHeight(), null);
-	        		}
-	        		else
-	        		{
-	        			combinedGraphics.drawImage(l.getData(), l.getX(), l.getY(), l.getWidth(), l.getHeight(), null);
-	        		}
-	        	}
-	        	else
-	        	{
-	        		combinedGraphics.drawImage(l.getData(), l.getX(), l.getY(), l.getWidth(), l.getHeight(), null);
-	        	}
-        	}
-        	
-    	}
-        
+        for (Layer l : image) {
+            if (!l.isVisible()) {
+                continue;
+            }
+            if (modifierTool != null && l == ImagePanel.get().getActiveLayer()) {
+                // create temp buff image, draw into that
+                var tempData = modifierTool.getTemporaryLayerData(l);
+                combinedGraphics.drawImage(tempData, l.getX(), l.getY(), l.getWidth(), l.getHeight(), null);
+            } else {
+                combinedGraphics.drawImage(l.getData(), l.getX(), l.getY(), l.getWidth(), l.getHeight(), null);
+            }
+
+        }
+
         g.drawImage(aggregatedImage, rect.x, rect.y, rect.width, rect.height, null);
-        
-        //if(drawThis!=null)
-        //{
-        //	drawThis.drawTemporaryImage(g);
-        //}
-        
+
+        // if(drawThis!=null)
+        // {
+        // drawThis.drawTemporaryImage(g);
+        // }
+
         g.setStroke(new BasicStroke());
-        
+
         // Draw a box around active layer
         if (activeLayer != null) {
             Rectangle layerRect = getLayerViewRect(activeLayer);
@@ -145,7 +135,6 @@ public class ImagePanel extends JPanel {
         }
 
         if (this.clip != null) {
-
             g.setColor(Color.YELLOW);
             g.draw(getClip(RELATIVE_TO_PANEL));
         }
@@ -180,20 +169,24 @@ public class ImagePanel extends JPanel {
         this.imageOffsetY = y;
     }
 
+    public Clipboard getClipboard() {
+        return this.clipboard;
+    }
+
     /**
      * Transforms a x position from panel space to another space.
      */
     public int transformX(int x, int relativeTo) {
         switch (relativeTo) {
-        default:
-        case RELATIVE_TO_PANEL:
-            return x;
-        case RELATIVE_TO_IMAGE:
-            Rectangle imageRect = getImageViewRect();
-            return MathUtil.map(x - imageRect.x, 0, imageRect.width, 0, image.getWidth());
-        case RELATIVE_TO_LAYER:
-            Rectangle layerRect = getLayerViewRect(activeLayer);
-            return MathUtil.map(x - layerRect.x, 0, layerRect.width, 0, activeLayer.getWidth());
+            default:
+            case RELATIVE_TO_PANEL:
+                return x;
+            case RELATIVE_TO_IMAGE:
+                Rectangle imageRect = getImageViewRect();
+                return MathUtil.map(x - imageRect.x, 0, imageRect.width, 0, image.getWidth());
+            case RELATIVE_TO_LAYER:
+                Rectangle layerRect = getLayerViewRect(activeLayer);
+                return MathUtil.map(x - layerRect.x, 0, layerRect.width, 0, activeLayer.getWidth());
         }
     }
 
@@ -202,15 +195,15 @@ public class ImagePanel extends JPanel {
      */
     public int transformY(int y, int relativeTo) {
         switch (relativeTo) {
-        default:
-        case RELATIVE_TO_PANEL:
-            return y;
-        case RELATIVE_TO_IMAGE:
-            Rectangle imageRect = getImageViewRect();
-            return MathUtil.map(y - imageRect.y, 0, imageRect.height, 0, image.getHeight());
-        case RELATIVE_TO_LAYER:
-            Rectangle layerRect = getLayerViewRect(activeLayer);
-            return MathUtil.map(y - layerRect.y, 0, layerRect.height, 0, activeLayer.getHeight());
+            default:
+            case RELATIVE_TO_PANEL:
+                return y;
+            case RELATIVE_TO_IMAGE:
+                Rectangle imageRect = getImageViewRect();
+                return MathUtil.map(y - imageRect.y, 0, imageRect.height, 0, image.getHeight());
+            case RELATIVE_TO_LAYER:
+                Rectangle layerRect = getLayerViewRect(activeLayer);
+                return MathUtil.map(y - layerRect.y, 0, layerRect.height, 0, activeLayer.getHeight());
         }
     }
 
@@ -219,15 +212,15 @@ public class ImagePanel extends JPanel {
      */
     public int inverseTransformX(int x, int relativeTo) {
         switch (relativeTo) {
-        default:
-        case RELATIVE_TO_PANEL:
-            return x;
-        case RELATIVE_TO_IMAGE:
-            Rectangle imageRect = getImageViewRect();
-            return MathUtil.map(x, 0, image.getWidth(), imageRect.x, imageRect.x + imageRect.width);
-        case RELATIVE_TO_LAYER:
-            Rectangle layerRect = getLayerViewRect(activeLayer);
-            return MathUtil.map(x, 0, activeLayer.getWidth(), layerRect.x, layerRect.x + layerRect.width);
+            default:
+            case RELATIVE_TO_PANEL:
+                return x;
+            case RELATIVE_TO_IMAGE:
+                Rectangle imageRect = getImageViewRect();
+                return MathUtil.map(x, 0, image.getWidth(), imageRect.x, imageRect.x + imageRect.width);
+            case RELATIVE_TO_LAYER:
+                Rectangle layerRect = getLayerViewRect(activeLayer);
+                return MathUtil.map(x, 0, activeLayer.getWidth(), layerRect.x, layerRect.x + layerRect.width);
         }
     }
 
@@ -236,15 +229,15 @@ public class ImagePanel extends JPanel {
      */
     public int inverseTransformY(int y, int relativeTo) {
         switch (relativeTo) {
-        default:
-        case RELATIVE_TO_PANEL:
-            return y;
-        case RELATIVE_TO_IMAGE:
-            Rectangle imageRect = getImageViewRect();
-            return MathUtil.map(y, 0, image.getHeight(), imageRect.y, imageRect.y + imageRect.height);
-        case RELATIVE_TO_LAYER:
-            Rectangle layerRect = getLayerViewRect(activeLayer);
-            return MathUtil.map(y, 0, activeLayer.getHeight(), layerRect.y, layerRect.y + layerRect.height);
+            default:
+            case RELATIVE_TO_PANEL:
+                return y;
+            case RELATIVE_TO_IMAGE:
+                Rectangle imageRect = getImageViewRect();
+                return MathUtil.map(y, 0, image.getHeight(), imageRect.y, imageRect.y + imageRect.height);
+            case RELATIVE_TO_LAYER:
+                Rectangle layerRect = getLayerViewRect(activeLayer);
+                return MathUtil.map(y, 0, activeLayer.getHeight(), layerRect.y, layerRect.y + layerRect.height);
         }
     }
 

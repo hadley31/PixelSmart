@@ -1,5 +1,6 @@
 package pixelsmart.tools;
 
+import pixelsmart.commands.Command;
 import pixelsmart.ui.ImagePanel;
 
 public class DebugTool extends AbstractTool {
@@ -15,6 +16,7 @@ public class DebugTool extends AbstractTool {
     }
 
     @Override
-    public void finishAction(ImagePanel panel) {
+    public Command finishAction(ImagePanel panel) {
+        return null;
     }
 }

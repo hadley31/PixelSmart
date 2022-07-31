@@ -44,31 +44,31 @@ public class Toolbar extends JToolBar {
                 move = new JButton(moveImage);
 
                 pencil.addActionListener(e -> {
-                        ToolManager.getInstance().setTool(new PencilTool());
+                        ToolManager.get().setTool(new PencilTool());
                 });
                 eraser.addActionListener(e -> {
-                        ToolManager.getInstance().setTool(new EraserTool());
+                        ToolManager.get().setTool(new EraserTool());
                 });
                 fill.addActionListener(e -> {
-                        ToolManager.getInstance().setTool(new PaintBucketTool());
+                        ToolManager.get().setTool(new PaintBucketTool());
                 });
                 color_picker.addActionListener(e -> {
-                        ToolManager.getInstance().setTool(new ColorPickerTool());
+                        ToolManager.get().setTool(new ColorPickerTool());
                 });
                 line.addActionListener(e -> {
-                        ToolManager.getInstance().setTool(new LineTool());
+                        ToolManager.get().setTool(new LineTool());
                 });
                 zoom.addActionListener(e -> {
-                        ToolManager.getInstance().setTool(new ZoomTool());
+                        ToolManager.get().setTool(new ZoomTool());
                 });
                 square_select.addActionListener(e -> {
-                        ToolManager.getInstance().setTool(new BoxSelectTool());
+                        ToolManager.get().setTool(new BoxSelectTool());
                 });
                 lasso_select.addActionListener(e -> {
-                        ToolManager.getInstance().setTool(new LassoTool());
+                        ToolManager.get().setTool(new LassoTool());
                 });
                 move.addActionListener(e -> {
-                        ToolManager.getInstance().setTool(new MoveTool());
+                        ToolManager.get().setTool(new MoveTool());
                 });
 
                 this.add(pencil);

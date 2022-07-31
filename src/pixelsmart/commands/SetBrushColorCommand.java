@@ -19,11 +19,11 @@ public class SetBrushColorCommand implements Command {
     @Override
     public void execute() {
         if (this.type == BrushColorType.PRIMARY) {
-            this.previousColor = ToolManager.getInstance().getPrimaryBrushColor();
-            ToolManager.getInstance().setPrimaryBrushColor(color);
+            this.previousColor = ToolManager.get().getPrimaryBrushColor();
+            ToolManager.get().setPrimaryBrushColor(color);
         } else if (this.type == BrushColorType.SECONDARY) {
-            this.previousColor = ToolManager.getInstance().getSecondaryBrushColor();
-            ToolManager.getInstance().setSecondaryBrushColor(color);
+            this.previousColor = ToolManager.get().getSecondaryBrushColor();
+            ToolManager.get().setSecondaryBrushColor(color);
         }
     }
 
@@ -33,9 +33,9 @@ public class SetBrushColorCommand implements Command {
             return;
 
         if (this.type == BrushColorType.PRIMARY) {
-            ToolManager.getInstance().setPrimaryBrushColor(previousColor);
+            ToolManager.get().setPrimaryBrushColor(previousColor);
         } else if (this.type == BrushColorType.SECONDARY) {
-            ToolManager.getInstance().setSecondaryBrushColor(previousColor);
+            ToolManager.get().setSecondaryBrushColor(previousColor);
         }
     }
 }

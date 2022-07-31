@@ -30,7 +30,7 @@ public class ToolMenu extends JMenu{
         JMenuItem pencilTool = new JMenuItem("Pencil");
         pencilTool.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_B, KeyEvent.SHIFT_DOWN_MASK));
         pencilTool.addActionListener(e -> {
-            ToolManager.getInstance().setTool(new PencilTool());
+            ToolManager.get().setTool(new PencilTool());
         });
 
         /**
@@ -39,7 +39,7 @@ public class ToolMenu extends JMenu{
         JMenuItem colorPickerTool = new JMenuItem("Color Picker");
         colorPickerTool.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.SHIFT_DOWN_MASK));
         colorPickerTool.addActionListener(e -> {
-            ToolManager.getInstance().setTool(new ColorPickerTool());
+            ToolManager.get().setTool(new ColorPickerTool());
         });
 
         /**
@@ -48,7 +48,7 @@ public class ToolMenu extends JMenu{
         JMenuItem eraserTool = new JMenuItem("Eraser");
         eraserTool.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, KeyEvent.SHIFT_DOWN_MASK));
         eraserTool.addActionListener(e -> {
-            ToolManager.getInstance().setTool(new EraserTool());
+            ToolManager.get().setTool(new EraserTool());
         });
 
         /**
@@ -57,7 +57,7 @@ public class ToolMenu extends JMenu{
         JMenuItem paintBucketTool = new JMenuItem("Paint Bucket");
         paintBucketTool.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, KeyEvent.SHIFT_DOWN_MASK));
         paintBucketTool.addActionListener(e -> {
-            ToolManager.getInstance().setTool(new PaintBucketTool());
+            ToolManager.get().setTool(new PaintBucketTool());
         });
 
         /**
@@ -66,7 +66,7 @@ public class ToolMenu extends JMenu{
         JMenuItem moveTool = new JMenuItem("Move");
         moveTool.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, KeyEvent.SHIFT_DOWN_MASK));
         moveTool.addActionListener(e -> {
-            ToolManager.getInstance().setTool(new MoveTool());
+            ToolManager.get().setTool(new MoveTool());
         });
 
         /**
@@ -75,7 +75,7 @@ public class ToolMenu extends JMenu{
         JMenuItem lineTool = new JMenuItem("Line");
         lineTool.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, KeyEvent.SHIFT_DOWN_MASK));
         lineTool.addActionListener(e -> {
-            ToolManager.getInstance().setTool(new LineTool());
+            ToolManager.get().setTool(new LineTool());
         });
 
         /**
@@ -84,7 +84,7 @@ public class ToolMenu extends JMenu{
         JMenuItem boxSelectTool = new JMenuItem("Box Select");
         boxSelectTool.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.SHIFT_DOWN_MASK));
         boxSelectTool.addActionListener(e -> {
-            ToolManager.getInstance().setTool(new BoxSelectTool());
+            ToolManager.get().setTool(new BoxSelectTool());
         });
 
         /**
@@ -93,7 +93,7 @@ public class ToolMenu extends JMenu{
         JMenuItem lassoSelectTool = new JMenuItem("Lasso Select");
         lassoSelectTool.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, KeyEvent.SHIFT_DOWN_MASK));
         lassoSelectTool.addActionListener(e -> {
-            ToolManager.getInstance().setTool(new LassoTool());
+            ToolManager.get().setTool(new LassoTool());
         });
 
         /**
@@ -102,7 +102,7 @@ public class ToolMenu extends JMenu{
         JMenuItem stencilTool = new JMenuItem("Stencil");
         stencilTool.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.SHIFT_DOWN_MASK));
         stencilTool.addActionListener(e -> {
-            ToolManager.getInstance().setTool(new StencilTool());
+            ToolManager.get().setTool(new StencilTool());
         });
 
         /**
@@ -111,7 +111,7 @@ public class ToolMenu extends JMenu{
         JMenuItem zoomTool = new JMenuItem("Zoom");
         zoomTool.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, KeyEvent.SHIFT_DOWN_MASK));
         zoomTool.addActionListener(e -> {
-            ToolManager.getInstance().setTool(new ZoomTool());
+            ToolManager.get().setTool(new ZoomTool());
         });
 
         this.add(colorPickerTool);

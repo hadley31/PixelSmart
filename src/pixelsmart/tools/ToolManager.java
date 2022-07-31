@@ -2,8 +2,11 @@ package pixelsmart.tools;
 
 import java.awt.Color;
 
+import pixelsmart.commands.Command;
+import pixelsmart.commands.CommandExecutor;
 import pixelsmart.ui.ImagePanel;
 import pixelsmart.ui.MainWindow;
+import pixelsmart.ui.Input;
 
 public class ToolManager {
 
@@ -17,7 +20,7 @@ public class ToolManager {
         this.tool = new PencilTool();
     }
 
-    public static synchronized ToolManager getInstance() {
+    public static synchronized ToolManager get() {
         if (instance == null) {
             instance = new ToolManager();
         }
@@ -27,7 +30,16 @@ public class ToolManager {
     public void update() {
         ImagePanel panel = ImagePanel.get();
         if (panel.getImage() != null && tool != null) {
-            tool.update(panel);
+            if (Input.getAnyMouseButtonDown()) {
+                tool.startAction(panel);
+            } else if (Input.getAnyMouseButton()) {
+                tool.updateAction(panel);
+            } else if (Input.getAnyMouseButtonUp()) {
+                final Command c = tool.finishAction(panel);
+                if (c != null) {
+                    CommandExecutor.get().execute(c);
+                }
+            }
         }
     }
 

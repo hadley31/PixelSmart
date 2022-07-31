@@ -15,7 +15,7 @@ import pixelsmart.image.Image;
 import pixelsmart.image.Layer;
 import pixelsmart.ui.ImagePanel;
 import pixelsmart.ui.MainWindow;
-import pixelsmart.util.ImageExporter;
+import pixelsmart.util.ImageFile;
 
 public class LayerMenu extends JMenu {
     private static final long serialVersionUID = -5953911805394394364L;
@@ -79,7 +79,7 @@ public class LayerMenu extends JMenu {
 
             // Load the buffered image from the chosen file
             File file = fileChooser.getSelectedFile();
-            BufferedImage data = ImageExporter.load(file);
+            BufferedImage data = ImageFile.load(file);
 
             // If the file was not an image, return
             if (data == null) {
@@ -192,8 +192,8 @@ public class LayerMenu extends JMenu {
         this.add(prevLayerButton);
         this.add(nextLayerButton);
         this.add(new JSeparator());
-        this.add(shiftLayerDownButton);
         this.add(shiftLayerUpButton);
+        this.add(shiftLayerDownButton);
         this.add(new JSeparator());
         this.add(toggleLayerVisibilityButton);
         this.add(new JSeparator());

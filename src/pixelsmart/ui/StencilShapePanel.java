@@ -25,15 +25,15 @@ public class StencilShapePanel extends JPanel {
 		star = new JButton(starImage);
 
 		circle.addActionListener(e -> {
-			ToolManager.getInstance().setTool(new StencilTool("circle1"));
+			ToolManager.get().setTool(new StencilTool("circle1"));
 		});
 
 		splash.addActionListener(e -> {
-			ToolManager.getInstance().setTool(new StencilTool("splash1"));
+			ToolManager.get().setTool(new StencilTool("splash1"));
 		});
 
 		star.addActionListener(e -> {
-			ToolManager.getInstance().setTool(new StencilTool("star"));
+			ToolManager.get().setTool(new StencilTool("star"));
 		});
 
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));

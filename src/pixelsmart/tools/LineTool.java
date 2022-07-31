@@ -2,16 +2,14 @@ package pixelsmart.tools;
 
 import java.awt.BasicStroke;
 import java.awt.Graphics2D;
-import java.awt.Shape;
-import java.awt.geom.Line2D;
 import java.awt.image.BufferedImage;
 
-import pixelsmart.commands.CommandList;
+import pixelsmart.commands.Command;
 import pixelsmart.commands.UpdateLayerDataCommand;
 import pixelsmart.image.Layer;
 import pixelsmart.ui.ImagePanel;
 
-public class LineTool extends DrawingTool {
+public class LineTool extends LayerModifierTool {
 
     private int startMX, startMY;
 
@@ -23,15 +21,14 @@ public class LineTool extends DrawingTool {
 
         startMX = panel.getMouseX(ImagePanel.RELATIVE_TO_LAYER);
         startMY = panel.getMouseY(ImagePanel.RELATIVE_TO_LAYER);
-        layerAppliedTo = panel.getActiveLayer();
     }
 
     @Override
-    public void finishAction(final ImagePanel panel) {
+    public Command finishAction(final ImagePanel panel) {
         Layer layer = panel.getActiveLayer();
 
         if (layer == null) {
-            return;
+            return null;
         }
 
         int mx = panel.getMouseX(ImagePanel.RELATIVE_TO_LAYER);
@@ -43,31 +40,32 @@ public class LineTool extends DrawingTool {
 
         g.setClip(panel.getClip(ImagePanel.RELATIVE_TO_LAYER));
 
-        g.setColor(ToolManager.getInstance().getPrimaryBrushColor());
+        g.setColor(ToolManager.get().getPrimaryBrushColor());
         BasicStroke stroke = new BasicStroke(getBrushSize(), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
         g.setStroke(stroke);
 
         g.drawLine(startMX, startMY, mx, my);
         g.dispose();
 
-        UpdateLayerDataCommand command = new UpdateLayerDataCommand(layer, newData);
-        CommandList.getInstance().addCommand(command);
-        layerAppliedTo = null;
+        return new UpdateLayerDataCommand(layer, newData);
     }
 
-    public void drawTemporaryImage(Graphics2D g) {
-		// TODO Auto-generated method stub
-    	
-		int mx = ImagePanel.get().getMouseX(ImagePanel.RELATIVE_TO_LAYER);
+    public BufferedImage getTemporaryLayerData(Layer layer) {
+        int mx = ImagePanel.get().getMouseX(ImagePanel.RELATIVE_TO_LAYER);
         int my = ImagePanel.get().getMouseY(ImagePanel.RELATIVE_TO_LAYER);
+
+        var data = layer.copyData();
+        var g = (Graphics2D) data.getGraphics();
 
         g.setClip(ImagePanel.get().getClip(ImagePanel.RELATIVE_TO_LAYER));
 
-        g.setColor(ToolManager.getInstance().getPrimaryBrushColor());
+        g.setColor(ToolManager.get().getPrimaryBrushColor());
         BasicStroke stroke = new BasicStroke(getBrushSize(), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
         g.setStroke(stroke);
 
         g.drawLine(startMX, startMY, mx, my);
-	}
+
+        return data;
+    }
 
 }

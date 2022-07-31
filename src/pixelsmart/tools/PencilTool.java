@@ -2,16 +2,15 @@ package pixelsmart.tools;
 
 import java.awt.BasicStroke;
 import java.awt.Graphics2D;
-import java.awt.Shape;
 import java.awt.geom.Path2D;
 import java.awt.image.BufferedImage;
 
-import pixelsmart.commands.CommandList;
+import pixelsmart.commands.Command;
 import pixelsmart.commands.UpdateLayerDataCommand;
 import pixelsmart.image.Layer;
 import pixelsmart.ui.ImagePanel;
 
-public class PencilTool extends DrawingTool {
+public class PencilTool extends LayerModifierTool {
 
     private Path2D.Double finalStrokeShape;
 
@@ -25,8 +24,6 @@ public class PencilTool extends DrawingTool {
 
         finalStrokeShape = new Path2D.Double();
         finalStrokeShape.moveTo(mx, my);
-        
-        layerAppliedTo = panel.getActiveLayer();
     }
 
     @Override
@@ -42,11 +39,11 @@ public class PencilTool extends DrawingTool {
     }
 
     @Override
-    public void finishAction(final ImagePanel panel) {
+    public Command finishAction(final ImagePanel panel) {
         final Layer layer = panel.getActiveLayer();
 
         if (layer == null) {
-            return;
+            return null;
         }
 
         final BufferedImage newData = layer.copyData();
@@ -61,22 +58,27 @@ public class PencilTool extends DrawingTool {
         g.draw(finalStrokeShape);
         g.dispose();
 
-        final UpdateLayerDataCommand c = new UpdateLayerDataCommand(layer, newData);
-        CommandList.getInstance().addCommand(c);
-        layerAppliedTo = null;
+        finalStrokeShape = null;
+
+        return new UpdateLayerDataCommand(layer, newData);
     }
 
-    public void drawTemporaryImage(Graphics2D g) {
-		// TODO Auto-generated method stub
-    	if(finalStrokeShape!=null)
-    	{
-			g.setClip(ImagePanel.get().getClip(ImagePanel.RELATIVE_TO_LAYER));
-	
-	        g.setColor(getColor());
-	        final BasicStroke stroke = new BasicStroke(getBrushSize(), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
-	        g.setStroke(stroke);
-	
-	        g.draw(finalStrokeShape);
-    	}
-	}
+    public BufferedImage getTemporaryLayerData(Layer layer) {
+        if (finalStrokeShape == null) {
+            return layer.getData();
+        }
+
+        var data = layer.copyData();
+        var g = data.createGraphics();
+        
+        g.setClip(ImagePanel.get().getClip(ImagePanel.RELATIVE_TO_LAYER));
+
+        g.setColor(getColor());
+        final BasicStroke stroke = new BasicStroke(getBrushSize(), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+        g.setStroke(stroke);
+
+        g.draw(finalStrokeShape);
+
+        return data;
+    }
 }

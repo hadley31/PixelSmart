@@ -14,8 +14,8 @@ public class SetBrushSizeCommand implements Command {
 
     @Override
     public void execute() {
-        previousSize = ToolManager.getInstance().getBrushSize();
-        ToolManager.getInstance().setBrushSize(size);
+        previousSize = ToolManager.get().getBrushSize();
+        ToolManager.get().setBrushSize(size);
     }
 
     @Override
@@ -23,7 +23,7 @@ public class SetBrushSizeCommand implements Command {
         if (previousSize < 0) {
             return;
         }
-        ToolManager.getInstance().setBrushSize(previousSize);
+        ToolManager.get().setBrushSize(previousSize);
         previousSize = Integer.MIN_VALUE;
     }
 

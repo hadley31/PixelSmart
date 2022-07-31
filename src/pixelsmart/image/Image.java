@@ -18,13 +18,14 @@ public class Image implements Iterable<Layer> {
 
     private int width;
     private int height;
+    private int layerCounter;
 
     public Image(int width, int height) {
         this.width = width;
         this.height = height;
 
         this.layers = new ArrayList<Layer>();
-        this.addLayer("Layer 1");
+        this.addLayer(getUniqueLayerName());
     }
 
     public Layer getBaseLayer() {
@@ -145,6 +146,10 @@ public class Image implements Iterable<Layer> {
 
     public int layerCount() {
         return layers.size();
+    }
+
+    public String getUniqueLayerName() {
+        return "Layer " + (++layerCounter);
     }
 
     public ArrayList<Layer> getLayers() {

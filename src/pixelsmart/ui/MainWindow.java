@@ -42,13 +42,13 @@ public class MainWindow extends JFrame {
 
         colorWheelButton = new JButton();
         colorWheelButton.addActionListener(e -> {
-            if (ToolManager.getInstance() == null) {
+            if (ToolManager.get() == null) {
                 return;
             }
             Color color = JColorChooser.showDialog(null, "Select Color",
-                    ToolManager.getInstance().getPrimaryBrushColor());
+                    ToolManager.get().getPrimaryBrushColor());
             colorWheelButton.setBackground(color);
-            ToolManager.getInstance().setPrimaryBrushColor(color);
+            ToolManager.get().setPrimaryBrushColor(color);
         });
 
         colorWheelButton.setPreferredSize(new Dimension(40, 40));
@@ -80,7 +80,7 @@ public class MainWindow extends JFrame {
         while (running()) {
             // Update
             Input.getInstance().update();
-            ToolManager.getInstance().update();
+            ToolManager.get().update();
 
             // Render
             imagePanel.repaint();

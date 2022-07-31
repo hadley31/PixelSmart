@@ -2,7 +2,7 @@ package pixelsmart.tools;
 
 import java.awt.geom.Path2D;
 
-import pixelsmart.commands.CommandList;
+import pixelsmart.commands.Command;
 import pixelsmart.commands.SetClipShapeCommand;
 import pixelsmart.ui.ImagePanel;
 
@@ -35,10 +35,9 @@ public class LassoTool extends AbstractTool {
     }
 
     @Override
-    public void finishAction(final ImagePanel panel) {
+    public Command finishAction(final ImagePanel panel) {
         clipShape.closePath();
 
-        SetClipShapeCommand command = new SetClipShapeCommand(clipShape);
-        CommandList.getInstance().addCommand(command);
+        return new SetClipShapeCommand(clipShape);
     }
 }
