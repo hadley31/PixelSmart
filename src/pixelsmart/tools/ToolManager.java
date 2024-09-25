@@ -15,6 +15,7 @@ public class ToolManager {
     private Color secondaryBrushColor = Color.WHITE;
     private int brushSize = 10;
     private AbstractTool tool;
+    private boolean toolInUse = false;
 
     private ToolManager() {
         this.tool = new PencilTool();
@@ -32,10 +33,12 @@ public class ToolManager {
         if (panel.getImage() != null && tool != null) {
             if (Input.getAnyMouseButtonDown()) {
                 tool.startAction(panel);
+                toolInUse = true;
             } else if (Input.getAnyMouseButton()) {
                 tool.updateAction(panel);
             } else if (Input.getAnyMouseButtonUp()) {
                 final Command c = tool.finishAction(panel);
+                toolInUse = false;
                 if (c != null) {
                     CommandExecutor.get().execute(c);
                 }
@@ -74,5 +77,9 @@ public class ToolManager {
 
     public AbstractTool getTool() {
         return this.tool;
+    }
+
+    public boolean toolInUse() {
+        return toolInUse;
     }
 }

@@ -78,16 +78,18 @@ public class StencilTool extends LayerModifierTool {
             return layer.getData();
         }
 
-        var data = layer.copyData();
-        var g = data.createGraphics();
-        
+        final BufferedImage data = layer.copyData();
+        final Graphics2D g = data.createGraphics();
+
         g.setClip(ImagePanel.get().getClip(ImagePanel.RELATIVE_TO_LAYER));
 
         g.setColor(getColor());
-        final BasicStroke stroke = new BasicStroke(getBrushSize(), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+        final BasicStroke stroke = new BasicStroke(getBrushSize() / 10);
         g.setStroke(stroke);
 
         g.draw(finalStrokeShape);
+        g.fill(finalStrokeShape);
+        g.dispose();
 
         return data;
     }

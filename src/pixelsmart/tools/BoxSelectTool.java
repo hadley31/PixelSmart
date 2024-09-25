@@ -17,7 +17,16 @@ public class BoxSelectTool extends ToolAdapter {
     }
 
     @Override
+    public void updateAction(final ImagePanel panel) {
+        panel.setClip(getClip(panel));
+    }
+
+    @Override
     public Command finishAction(final ImagePanel panel) {
+        return new SetClipShapeCommand(getClip(panel));
+    }
+
+    private Rectangle getClip(final ImagePanel panel) {
         int mx = panel.getMouseX(ImagePanel.RELATIVE_TO_IMAGE);
         int my = panel.getMouseY(ImagePanel.RELATIVE_TO_IMAGE);
 
@@ -26,9 +35,6 @@ public class BoxSelectTool extends ToolAdapter {
         int minY = Math.min(startY, my);
         int maxY = Math.max(startY, my);
 
-        Rectangle clip = new Rectangle(minX, minY, maxX - minX, maxY - minY);
-
-        return new SetClipShapeCommand(clip);
+        return new Rectangle(minX, minY, maxX - minX, maxY - minY);
     }
-
 }

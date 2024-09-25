@@ -108,14 +108,12 @@ public class ImagePanel extends JPanel {
             if (!l.isVisible()) {
                 continue;
             }
-            if (modifierTool != null && l == ImagePanel.get().getActiveLayer()) {
-                // create temp buff image, draw into that
+            if (ToolManager.get().toolInUse() && modifierTool != null && l == ImagePanel.get().getActiveLayer()) {
                 var tempData = modifierTool.getTemporaryLayerData(l);
                 combinedGraphics.drawImage(tempData, l.getX(), l.getY(), l.getWidth(), l.getHeight(), null);
             } else {
                 combinedGraphics.drawImage(l.getData(), l.getX(), l.getY(), l.getWidth(), l.getHeight(), null);
             }
-
         }
 
         g.drawImage(aggregatedImage, rect.x, rect.y, rect.width, rect.height, null);
@@ -138,6 +136,8 @@ public class ImagePanel extends JPanel {
             g.setColor(Color.YELLOW);
             g.draw(getClip(RELATIVE_TO_PANEL));
         }
+
+        g.dispose();
     }
 
     private int getImageViewWidth() {

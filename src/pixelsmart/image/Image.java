@@ -105,12 +105,7 @@ public class Image implements Iterable<Layer> {
     }
 
     public Layer getLayerByName(String name) {
-        for (Layer l : layers) {
-            if (l.getName().equals(name))
-                return l;
-        }
-
-        return null;
+        return layers.stream().filter(l -> l.getName().equals(name)).findFirst().orElse(null);
     }
 
     public Layer getLayerByIndex(int index) {
