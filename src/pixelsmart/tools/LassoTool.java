@@ -1,5 +1,6 @@
 package pixelsmart.tools;
 
+import java.awt.Shape;
 import java.awt.geom.Path2D;
 
 import pixelsmart.commands.Command;
@@ -32,6 +33,11 @@ public class LassoTool extends AbstractTool {
         int my = panel.getMouseY(ImagePanel.RELATIVE_TO_IMAGE);
 
         clipShape.lineTo(mx, my);
+
+        Path2D.Double tempPath = new Path2D.Double(clipShape);
+        tempPath.closePath();
+
+        panel.setClip(tempPath);
     }
 
     @Override

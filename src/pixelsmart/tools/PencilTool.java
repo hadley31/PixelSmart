@@ -70,7 +70,7 @@ public class PencilTool extends LayerModifierTool {
 
         var data = layer.copyData();
         var g = data.createGraphics();
-        
+
         g.setClip(ImagePanel.get().getClip(ImagePanel.RELATIVE_TO_LAYER));
 
         g.setColor(getColor());
@@ -78,6 +78,7 @@ public class PencilTool extends LayerModifierTool {
         g.setStroke(stroke);
 
         g.draw(finalStrokeShape);
+        g.dispose();
 
         return data;
     }

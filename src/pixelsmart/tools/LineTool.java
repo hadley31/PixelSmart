@@ -12,6 +12,7 @@ import pixelsmart.ui.ImagePanel;
 public class LineTool extends LayerModifierTool {
 
     private int startMX, startMY;
+    private boolean isDrawing = false;
 
     @Override
     public void startAction(final ImagePanel panel) {
@@ -19,6 +20,7 @@ public class LineTool extends LayerModifierTool {
             return;
         }
 
+        isDrawing = true;
         startMX = panel.getMouseX(ImagePanel.RELATIVE_TO_LAYER);
         startMY = panel.getMouseY(ImagePanel.RELATIVE_TO_LAYER);
     }
@@ -47,10 +49,16 @@ public class LineTool extends LayerModifierTool {
         g.drawLine(startMX, startMY, mx, my);
         g.dispose();
 
+        isDrawing = false;
+
         return new UpdateLayerDataCommand(layer, newData);
     }
 
     public BufferedImage getTemporaryLayerData(Layer layer) {
+        if (!isDrawing) {
+            return layer.getData();
+        }
+
         int mx = ImagePanel.get().getMouseX(ImagePanel.RELATIVE_TO_LAYER);
         int my = ImagePanel.get().getMouseY(ImagePanel.RELATIVE_TO_LAYER);
 

@@ -46,8 +46,22 @@ public class EraserTool extends LayerModifierTool {
 		}
 
 		Layer layer = panel.getActiveLayer();
-		BufferedImage newData = layer.copyData();
-		Graphics2D g = newData.createGraphics();
+
+		return new UpdateLayerDataCommand(layer, getUpdatedImageData(panel, layer));
+	}
+
+	@Override
+	public BufferedImage getTemporaryLayerData(Layer layer) {
+		if (finalStrokeShape == null) {
+			return layer.getData();
+		}
+
+		return getUpdatedImageData(ImagePanel.get(), layer);
+	}
+
+	private BufferedImage getUpdatedImageData(ImagePanel panel, Layer layer) {
+		var data = layer.copyData();
+		Graphics2D g = data.createGraphics();
 
 		g.setClip(panel.getClip(ImagePanel.RELATIVE_TO_LAYER));
 		g.setColor(new Color(0, 0, 0, 0));
@@ -58,25 +72,7 @@ public class EraserTool extends LayerModifierTool {
 		g.draw(finalStrokeShape);
 
 		g.dispose();
-		return new UpdateLayerDataCommand(layer, newData);
-	}
 
-	public BufferedImage getTemporaryLayerData(Layer layer) {
-        if (finalStrokeShape == null) {
-            return layer.getData();
-        }
-
-        var data = layer.copyData();
-        var g = data.createGraphics();
-        
-        g.setClip(ImagePanel.get().getClip(ImagePanel.RELATIVE_TO_LAYER));
-
-        g.setColor(getColor());
-        final BasicStroke stroke = new BasicStroke(getBrushSize(), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
-        g.setStroke(stroke);
-
-        g.draw(finalStrokeShape);
-
-        return data;
+		return data;
 	}
 }

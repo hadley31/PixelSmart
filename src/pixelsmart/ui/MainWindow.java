@@ -12,6 +12,7 @@ import javax.swing.JPanel;
 import javax.swing.JToolBar;
 import javax.swing.border.EmptyBorder;
 
+import pixelsmart.image.Image;
 import pixelsmart.tools.ToolManager;
 import pixelsmart.ui.menubar.MenuBar;
 
@@ -40,7 +41,7 @@ public class MainWindow extends JFrame {
 
         JToolBar attributeToolbar = new JToolBar("Tools");
 
-        colorWheelButton = new JButton();
+        colorWheelButton = new JButton(" ");
         colorWheelButton.addActionListener(e -> {
             if (ToolManager.get() == null) {
                 return;
@@ -51,7 +52,9 @@ public class MainWindow extends JFrame {
             ToolManager.get().setPrimaryBrushColor(color);
         });
 
-        colorWheelButton.setPreferredSize(new Dimension(40, 40));
+        colorWheelButton.setPreferredSize(new Dimension(50, 50));
+        colorWheelButton.setOpaque(true);
+        colorWheelButton.setBorderPainted(false);
         colorWheelButton.setBackground(Color.black);
         attributeToolbar.add(new JLabel("Color"));
         attributeToolbar.add(colorWheelButton);
@@ -62,7 +65,7 @@ public class MainWindow extends JFrame {
         LayerList layerList = new LayerList(imagePanel);
 
         contentPane.add(new StencilShapePanel(), BorderLayout.WEST);
-        contentPane.add(new Toolbar() ,BorderLayout.NORTH);
+        contentPane.add(new Toolbar(), BorderLayout.NORTH);
         contentPane.add(attributeToolbar, BorderLayout.SOUTH);
         contentPane.add(layerList, BorderLayout.EAST);
         contentPane.add(imagePanel, BorderLayout.CENTER);
@@ -101,9 +104,9 @@ public class MainWindow extends JFrame {
     private boolean running() {
         return this.isDisplayable();
     }
-    
+
     public void setColorButtonColor(Color c) {
-    	colorWheelButton.setBackground(c);
+        colorWheelButton.setBackground(c);
     }
 
 }
